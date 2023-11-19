@@ -25,6 +25,14 @@ function isArray(val) {
   return Array.isArray(val);
 }
 
+function isStringNull(val) {
+  return val == 'null'
+}
+
+function parseNull(val) {
+  return null
+}
+
 function parseValue(val) {
   if (typeof val == 'undefined' || val == '') {
     return null;
@@ -36,17 +44,25 @@ function parseValue(val) {
     return parseObject(val);
   } else if (isNumber(val)) {
     return parseNumber(val);
+  } else if (isStringNull(val)) {
+    return parseNull(val);
   } else {
     return val;
   }
 }
 
-function parseObject(obj) {
+function parseObject(obj, options ) {
+  options = { ignoreNull: true, ...options}
+  console.log(options)
   var result = {};
   var key, val;
   for (key in obj) {
     val = parseValue(obj[key]);
-    if (val !== null) result[key] = val; // ignore null values
+    if (options.ignoreNull === true) {
+      if (val !== null) result[key] = val; // ignore null values
+    } else {
+      result[key] = val;
+    }
   }
   return result;
 }
